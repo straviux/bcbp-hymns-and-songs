@@ -1,0 +1,8 @@
+{
+  "name": "Harmony Haven",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue-vite",
+  "id": "060d42d5"
+}
