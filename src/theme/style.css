@@ -1,0 +1,9 @@
+.header-with-background {
+    background-image: url('../assets/img/headerbg1.jpg');
+    background-size: cover;
+    /* or contain, depending on how you want the image to be displayed */
+    background-position: center;
+    /* or adjust as needed */
+    color: white;
+    /* Adjust text color for better visibility */
+}
