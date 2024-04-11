@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
-// import TabsPage from '../views/TabsPage.vue'
+import TabsPage from '../views/TabsPage.vue'
 import ManagePage from '../views/ManagePage.vue'
-// import SongViewPage from '../views/SongViewPage.vue'
+import SongViewPage from '../views/SongViewPage.vue'
 import { Storage } from '@ionic/storage';
 
 const routes: Array<RouteRecordRaw> = [
@@ -12,35 +12,35 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/',
-    redirect: '/manage/list'
+    redirect: '/tabs/category'
   },
-  // {
-  //   path: '/tabs/',
-  //   component: TabsPage,
-  //   children: [
-  //     {
-  //       path: '',
-  //       redirect: '/tabs/songs'
-  //     },
-  //     {
-  //       path: 'songs',
-  //       component: () => import('@/views/SongListPage.vue')
-  //     },
+  {
+    path: '/tabs/',
+    component: TabsPage,
+    children: [
+      {
+        path: '',
+        redirect: '/tabs/songs'
+      },
+      {
+        path: 'songs',
+        component: () => import('@/views/SongListPage.vue')
+      },
       
-  //     {
-  //       path: 'category',
-  //       component: () => import('@/views/CategoryListPage.vue')
-  //     },
-  //     {
-  //       path: 'chords',
-  //       component: () => import('@/views/ChordListPage.vue')
-  //     }
-  //   ],
-  // },
-  // {
-  //   path: '/song/:songid/:type?',
-  //   component: SongViewPage
-  // },
+      {
+        path: 'category',
+        component: () => import('@/views/CategoryListPage.vue')
+      },
+      {
+        path: 'chords',
+        component: () => import('@/views/ChordListPage.vue')
+      }
+    ],
+  },
+  {
+    path: '/song/:songid/:type?',
+    component: SongViewPage
+  },
   {
     path: '/manage/',
     component: ManagePage,

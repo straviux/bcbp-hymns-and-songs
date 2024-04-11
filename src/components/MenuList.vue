@@ -103,12 +103,20 @@ const openModal = async (modalName: any) => {
 			const lastLibraryUpdate = await store.get('last-library-update');
 			let toastMsg = 'Library is already up to date';
 			await db.value?.open();
+			const respSelect = await db.value?.query('SELECT COUNT(*) as song_count FROM songs');
+			console.log(`res: ${JSON.stringify(respSelect.values[0].song_count)}`);
+			// console.log(respSelect.values);
+			// await db.value?.close();
+			// await sqlite.value?.closeConnection('db_songlist', false);
 
 			await axios.get('/api/songs').then((res: any) => {
 				const apiSongs = res.data.data;
 				const apiLastUpdate = res.data.last_update;
 				// db.value?.open();
-				if (lastLibraryUpdate != apiLastUpdate) {
+				if (
+					lastLibraryUpdate != apiLastUpdate ||
+					parseInt(respSelect.values[0].song_count) !== parseInt(apiSongs.length)
+				) {
 					let setLastUpdate = null;
 					db.value?.query('DELETE FROM songs');
 					// db.value?.close();
@@ -119,15 +127,17 @@ const openModal = async (modalName: any) => {
 								`INSERT INTO songs (id,title,lyrics,chords,artist,category) values (?,?,?,?,?,?)`,
 								[song.id, song.title, song.lyrics, song.chords, song.artist, song.category]
 							);
-							db.value?.close();
 							toastMsg = 'Library has been updated';
 						} catch (error) {
 							setLastUpdate = null;
+							// toastMsg = 'Library has been updated';
 							alert(error);
 						}
 					});
 					store.set('last-library-update', setLastUpdate);
+					db.value?.close();
 				}
+				// console.log(...apiSongs);
 			});
 
 			updateLibraryModal.dismiss();

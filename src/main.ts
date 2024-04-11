@@ -120,7 +120,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
           console.log('get values')
         } else {
-          // console.log(`res: ${JSON.stringify(respSelect.values.length)}`);
+          console.log(`res: ${JSON.stringify(respSelect.values.length)}`);
         }
         
 
