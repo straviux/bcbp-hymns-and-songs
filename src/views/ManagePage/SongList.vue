@@ -105,7 +105,7 @@ const filterSongs = computed(() => {
 });
 onIonViewDidEnter(async () => {
 	const response = await axios.get('/api/songs');
-	// console.log(response.data);
+	console.log(response.data);
 	songs.value = response.data.data;
 	// console.log(songs.value);
 });

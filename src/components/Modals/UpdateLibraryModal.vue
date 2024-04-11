@@ -13,12 +13,25 @@
 </template>
 
 <script lang="ts" setup>
-import { IonContent, IonProgressBar, modalController } from '@ionic/vue';
+import {
+	// onIonViewDidEnter,
+	// onIonViewWillLeave,
+	IonContent,
+	IonProgressBar,
+	// modalController,
+} from '@ionic/vue';
+
+// onIonViewDidEnter(async () => {
+
+// 	// loadData();
+// });
+
+// onIonViewWillLeave(async () => {
 
 // test: close modal after 3 seconds
-setTimeout(() => {
-	modalController.dismiss();
-}, 3000);
+// setTimeout(() => {
+// 	modalController.dismiss();
+// }, 3000);
 // const cancel = () => modalController.dismiss(null, 'cancel');
 // const confirm = () => modalController.dismiss(name.value, 'confirm');
 </script>

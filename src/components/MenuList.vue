@@ -33,12 +33,26 @@
 	</ion-content>
 </template>
 <script setup lang="ts">
-import { IonContent, IonList, IonItem, IonButton, IonIcon, modalController } from '@ionic/vue';
+import { ref } from 'vue';
+import {
+	IonContent,
+	IonList,
+	IonItem,
+	IonButton,
+	IonIcon,
+	modalController,
+	toastController,
+} from '@ionic/vue';
 import { cloudDownloadOutline, informationCircleOutline, settingsOutline } from 'ionicons/icons';
 import SettingsModal from '@/components/Modals/SettingsModal.vue';
 import UpdateLibraryModal from '@/components/Modals/UpdateLibraryModal.vue';
 import AboutModal from '@/components/Modals/AboutModal.vue';
 // import { ref } from 'vue';
+import axios from 'axios';
+import { CapacitorSQLite, SQLiteConnection, SQLiteDBConnection } from '@capacitor-community/sqlite';
+
+const db = ref<any>(SQLiteDBConnection);
+const sqlite = ref<any>(SQLiteConnection);
 
 // const message = ref('This modal example uses the modalController to present and dismiss modals.');
 const openModal = async (modalName: any) => {
@@ -60,8 +74,94 @@ const openModal = async (modalName: any) => {
 	const settingsModal = await modalController.create(settingsModalComponent);
 
 	if (modalName == 'settings') settingsModal.present();
-	if (modalName == 'update') updateLibraryModal.present();
+	if (modalName == 'update') {
+		updateLibraryModal.present().then(async () => {
+			sqlite.value = new SQLiteConnection(CapacitorSQLite);
+			const ret = await sqlite.value.checkConnectionsConsistency();
+			const isConn = (await sqlite.value.isConnection('db_songlist', false)).result;
+
+			if (ret.result && isConn) {
+				db.value = await sqlite.value?.retrieveConnection('db_songlist', false);
+			} else {
+				db.value = await sqlite.value?.createConnection(
+					'db_songlist',
+					false,
+					'no-encryption',
+					1,
+					false
+				);
+			}
+			loadData();
+		});
+
+		const loadData = async () => {
+			// console.log(db.value);
+			await db.value?.open();
+			const respSelect = await db.value?.query('SELECT * FROM songs');
+			// // console.log(`res: ${JSON.stringify(respSelect.length)}`);
+			// console.log(respSelect.values);
+			await db.value?.close();
+			await sqlite.value?.closeConnection('db_songlist', false);
+
+			// respSelect.values.forEach(async (song: any) => {
+			// 	// console.log(song)
+			// 	const response = await axios.post('/api/songs', {
+			// 		// content: songData,
+			// 		title: song.title,
+			// 		lyrics: song.lyrics,
+			// 		chords: song.chords,
+			// 		artist: song.artist,
+			// 		category: song.category,
+			// 	});
+			// });
+			const response = await axios.get('/api/songs');
+			const cloudDataLength = response.data.data.length;
+			let toastMsg = 'Library is already up to date';
+			if (cloudDataLength !== respSelect.values.length) {
+				// console.log('do update script here');
+				// db.value?.open();
+
+				response.data.data.forEach(async (song: any) => {
+					// console.log(song);
+					try {
+						await db.value?.open();
+						await db.value?.query(
+							'INSERT INTO songs (id,title,lyrics,chords,artist,category) values (?,?,?,?,?,?)',
+							[song.id, song.title, song.lyrics, song.chords, song.artist, song.category]
+						);
+						toastMsg = 'Library has been updated';
+					} catch (e) {
+						// console.log((e as any).message);
+						toastMsg = 'Somethin went wrong, please try again';
+					}
+				});
+				// db.value?.close();
+				// console.log('library successfully updated');
+
+				updateLibraryModal.dismiss();
+			} else {
+				// console.log('there is no new update');
+				updateLibraryModal.dismiss();
+			}
+			const toast = await toastController.create({
+				message: toastMsg,
+				duration: 1600,
+				cssClass: 'custom-toast',
+				position: 'bottom',
+			});
+			await toast.present();
+		};
+	}
+
 	if (modalName == 'about') aboutModal.present();
 };
 </script>
-<style></style>
+<style>
+ion-toast.custom-toast {
+	--background: #6a679e;
+	--width: 300px;
+	--box-shadow: 3px 3px 10px 0 rgba(0, 0, 0, 0.6s);
+	--color: #f1f1f1;
+	font-size: 14px;
+}
+</style>

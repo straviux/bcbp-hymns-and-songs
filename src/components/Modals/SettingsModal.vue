@@ -12,7 +12,7 @@
 			</ion-buttons>
 		</ion-toolbar>
 		<div class="ion-padding">
-			<div class="settings-content">test</div>
+			<div class="settings-content">Coming soon..</div>
 		</div>
 	</ion-content>
 </template>

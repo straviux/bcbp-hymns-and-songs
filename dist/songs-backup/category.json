@@ -1,0 +1,13 @@
+{
+    "categories":[
+        {"id":1, "category":"worship-and-praise","name":"Worship/Praise"},
+        {"id":2, "category":"advent","name":"Advent"},
+        {"id":3, "category":"liturgical","name":"Liturgical"},
+        {"id":4, "category":"marian","name":"Marian"},
+        {"id":5, "category":"gathering","name":"Gathering"},
+        {"id":6, "category":"bereavement","name":"Bereavement"},
+        {"id":7, "category":"lent-and-easter","name":"Lent & Easter"},
+        {"id":8, "category":"others","name":"Others"}
+
+    ]
+}

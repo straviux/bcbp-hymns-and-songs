@@ -48,7 +48,7 @@ import HeaderToolBar from '@/components/HeaderToolBar.vue';
 // import axios from 'axios';
 import {
 	onIonViewDidEnter,
-	// onIonViewWillLeave,
+	onIonViewWillLeave,
 	IonButton,
 	IonListHeader,
 	IonPage,
@@ -59,7 +59,7 @@ import {
 	IonIcon,
 } from '@ionic/vue';
 import { cloudOfflineOutline } from 'ionicons/icons';
-// import { CapacitorSQLite, SQLiteConnection, SQLiteDBConnection } from '@capacitor-community/sqlite';
+import { CapacitorSQLite, SQLiteConnection, SQLiteDBConnection } from '@capacitor-community/sqlite';
 
 const isHeaderHidden = ref(false);
 
@@ -100,12 +100,46 @@ const filteredCategory = computed(() => {
 	return filterArray(categories.value, searchQuery.value.toLowerCase());
 });
 
-onIonViewDidEnter(async () => {
-	// GET SONG LIST
-	const song_data = await fetch('/songs.json');
-	const __songs = await song_data.json();
-	songs.value = __songs.songs;
+// onIonViewDidEnter(async () => {
+// 	// GET SONG LIST
+// 	// const song_data = await fetch('/songs.json');
+// 	// const __songs = await song_data.json();
+// 	// songs.value = __songs.songs;
+// });
 
+const db = ref<any>(SQLiteDBConnection);
+const sqlite = ref<any>(SQLiteConnection);
+onIonViewDidEnter(async () => {
+	sqlite.value = new SQLiteConnection(CapacitorSQLite);
+	const ret = await sqlite.value.checkConnectionsConsistency();
+	const isConn = (await sqlite.value.isConnection('db_songlist', false)).result;
+
+	if (ret.result && isConn) {
+		db.value = await sqlite.value?.retrieveConnection('db_songlist', false);
+	} else {
+		db.value = await sqlite.value?.createConnection(
+			'db_songlist',
+			false,
+			'no-encryption',
+			1,
+			false
+		);
+	}
+
+	loadData();
+});
+
+onIonViewWillLeave(async () => {
+	await sqlite.value?.closeConnection('db_songlist', false);
+});
+
+const loadData = async () => {
+	await db.value?.open();
+	const respSelect = await db.value?.query('SELECT * FROM songs');
+	// console.log(`res: ${JSON.stringify(respSelect)}`);
+	await db.value?.close();
+
+	songs.value = respSelect?.values;
 	// GET CATEGORY LIST
 	const category_data = await fetch('/category.json');
 	const __categories = await category_data.json();
@@ -122,43 +156,7 @@ onIonViewDidEnter(async () => {
 			}
 		}
 	});
-});
-
-// const db = ref<any>(SQLiteDBConnection);
-// const sqlite = ref<any>(SQLiteConnection);
-// const songs = ref<any>();
-// onIonViewDidEnter(async () => {
-// 	sqlite.value = new SQLiteConnection(CapacitorSQLite);
-// 	const ret = await sqlite.value.checkConnectionsConsistency();
-// 	const isConn = (await sqlite.value.isConnection('db_songlist', false)).result;
-
-// 	if (ret.result && isConn) {
-// 		db.value = await sqlite.value?.retrieveConnection('db_songlist', false);
-// 	} else {
-// 		db.value = await sqlite.value?.createConnection(
-// 			'db_songlist',
-// 			false,
-// 			'no-encryption',
-// 			1,
-// 			false
-// 		);
-// 	}
-
-// 	loadData();
-// });
-
-// onIonViewWillLeave(async () => {
-// 	await sqlite.value?.closeConnection('db_songlist', false);
-// });
-
-// const loadData = async () => {
-// 	await db.value?.open();
-// 	const respSelect = await db.value?.query('SELECT * FROM songs');
-// 	console.log(`res: ${JSON.stringify(respSelect)}`);
-// 	await db.value?.close();
-
-// 	songs.value = respSelect?.values;
-// };
+};
 
 // const { data } = await axios.get('../../database/songs.json');
 // songs.value = data;

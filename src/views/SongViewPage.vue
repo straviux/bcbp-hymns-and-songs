@@ -56,7 +56,11 @@ import { add, removeOutline, arrowBackOutline, chevronUpOutline } from 'ionicons
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
 // import axios from 'axios';
+import { CapacitorSQLite, SQLiteConnection, SQLiteDBConnection } from '@capacitor-community/sqlite';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
+
+const db = ref<any>(SQLiteDBConnection);
+const sqlite = ref<any>(SQLiteConnection);
 
 const route = useRoute();
 const songId = route.params?.songid;
@@ -64,14 +68,42 @@ const songType = route.params?.type;
 // console.log(songType);
 const song = ref<any>([]);
 onIonViewDidEnter(async () => {
-	const data = await fetch('/songs.json');
-	const __songs = await data.json();
-	song.value = __songs.songs?.filter((findSong: any) => {
-		// console.log(findSong?.id);
-		return findSong.id == songId;
-	});
+	sqlite.value = new SQLiteConnection(CapacitorSQLite);
+	const ret = await sqlite.value.checkConnectionsConsistency();
+	const isConn = (await sqlite.value.isConnection('db_songlist', false)).result;
+
+	if (ret.result && isConn) {
+		db.value = await sqlite.value?.retrieveConnection('db_songlist', false);
+	} else {
+		db.value = await sqlite.value?.createConnection(
+			'db_songlist',
+			false,
+			'no-encryption',
+			1,
+			false
+		);
+	}
+
+	loadData();
+
+	// const data = await fetch('/songs.json');
+	// const __songs = await data.json();
+	// song.value = __songs.songs?.filter((findSong: any) => {
+	// 	// console.log(findSong?.id);
+	// 	return findSong.id == songId;
+	// });
 	// console.log(song.value);
 });
+
+const loadData = async () => {
+	await db.value?.open();
+	const respSelect = await db.value?.query('SELECT * FROM songs WHERE id=' + songId);
+	// console.log(`res: ${JSON.stringify(respSelect)}`);
+	await db.value?.close();
+
+	song.value = respSelect?.values;
+};
+
 const defaultFontSize = ref<number>(100);
 const increaseFont = (ev: CustomEvent) => {
 	ev.stopImmediatePropagation();

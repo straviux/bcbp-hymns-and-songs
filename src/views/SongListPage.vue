@@ -40,6 +40,7 @@ import { ref, computed } from 'vue';
 import {
 	onIonViewDidEnter,
 	// onIonViewWillLeave
+	onIonViewWillLeave,
 	IonButton,
 	IonPage,
 	IonContent,
@@ -52,7 +53,7 @@ import { cloudOfflineOutline } from 'ionicons/icons';
 
 import HeaderToolBar from '@/components/HeaderToolBar.vue';
 // import 'HeaderToolBar' from ''
-// import { CapacitorSQLite, SQLiteConnection, SQLiteDBConnection } from '@capacitor-community/sqlite';
+import { CapacitorSQLite, SQLiteConnection, SQLiteDBConnection } from '@capacitor-community/sqlite';
 
 const isHeaderHidden = ref(false);
 
@@ -67,41 +68,41 @@ const onContentScroll = (ev: CustomEvent) => {
 	}
 };
 
-// const db = ref<any>(SQLiteDBConnection);
-// const sqlite = ref<any>(SQLiteConnection);
-// const songs = ref<any>();
-// onIonViewDidEnter(async () => {
-// 	sqlite.value = new SQLiteConnection(CapacitorSQLite);
-// 	const ret = await sqlite.value.checkConnectionsConsistency();
-// 	const isConn = (await sqlite.value.isConnection('db_songlist', false)).result;
+const db = ref<any>(SQLiteDBConnection);
+const sqlite = ref<any>(SQLiteConnection);
 
-// 	if (ret.result && isConn) {
-// 		db.value = await sqlite.value?.retrieveConnection('db_songlist', false);
-// 	} else {
-// 		db.value = await sqlite.value?.createConnection(
-// 			'db_songlist',
-// 			false,
-// 			'no-encryption',
-// 			1,
-// 			false
-// 		);
-// 	}
+onIonViewDidEnter(async () => {
+	sqlite.value = new SQLiteConnection(CapacitorSQLite);
+	const ret = await sqlite.value.checkConnectionsConsistency();
+	const isConn = (await sqlite.value.isConnection('db_songlist', false)).result;
 
-// 	loadData();
-// });
+	if (ret.result && isConn) {
+		db.value = await sqlite.value?.retrieveConnection('db_songlist', false);
+	} else {
+		db.value = await sqlite.value?.createConnection(
+			'db_songlist',
+			false,
+			'no-encryption',
+			1,
+			false
+		);
+	}
 
-// onIonViewWillLeave(async () => {
-// 	await sqlite.value?.closeConnection('db_songlist', false);
-// });
+	loadData();
+});
 
-// const loadData = async () => {
-// 	await db.value?.open();
-// 	const respSelect = await db.value?.query('SELECT * FROM songs');
-// 	console.log(`res: ${JSON.stringify(respSelect)}`);
-// 	await db.value?.close();
+onIonViewWillLeave(async () => {
+	await sqlite.value?.closeConnection('db_songlist', false);
+});
 
-// 	songs.value = respSelect?.values;
-// };
+const loadData = async () => {
+	await db.value?.open();
+	const respSelect = await db.value?.query('SELECT * FROM songs');
+	// console.log(`res: ${JSON.stringify(respSelect)}`);
+	await db.value?.close();
+
+	songs.value = respSelect?.values;
+};
 
 const songs = ref<any>();
 const searchQuery = ref('');
@@ -119,9 +120,9 @@ const filterSongs = computed(() => {
 		)
 		.sort((a: any, b: any) => a.title.localeCompare(b.title));
 });
-onIonViewDidEnter(async () => {
-	const data = await fetch('/songs.json');
-	const __songs = await data.json();
-	songs.value = __songs.songs;
-});
+// onIonViewDidEnter(async () => {
+// 	const data = await fetch('/songs.json');
+// 	const __songs = await data.json();
+// 	songs.value = __songs.songs;
+// });
 </script>

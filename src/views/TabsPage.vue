@@ -17,6 +17,10 @@
 					<ion-icon aria-hidden="true" :icon="playCircleOutline" />
 					<ion-label>Chords</ion-label>
 				</ion-tab-button>
+				<!-- <ion-tab-button tab="tab3" href="/manage/">
+					<ion-icon aria-hidden="true" :icon="settingsOutline" />
+					<ion-label>Manage</ion-label>
+				</ion-tab-button> -->
 			</ion-tab-bar>
 		</ion-tabs>
 	</ion-page>
@@ -32,7 +36,12 @@ import {
 	IonPage,
 	IonRouterOutlet,
 } from '@ionic/vue';
-import { musicalNote, grid, playCircleOutline } from 'ionicons/icons';
+import {
+	musicalNote,
+	grid,
+	playCircleOutline,
+	// settingsOutline
+} from 'ionicons/icons';
 </script>
 
 <style>
