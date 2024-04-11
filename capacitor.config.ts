@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'BCBP Hymns',
   webDir: 'dist',
   server: {
-    androidScheme: 'https'
+    androidScheme: 'http'
   }
 };
 

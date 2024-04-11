@@ -61,6 +61,7 @@ const verifyCode = async () => {
 	// console.log(actvcode.value);
 	if (actvcode.value == '486512') {
 		await store.set('bcbp-app-activated', true);
+		await store.set('last-library-update', null);
 		// console.log(await store.get('activated'));
 		router.push('/');
 	} else {

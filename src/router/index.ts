@@ -12,7 +12,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/',
-    redirect: '/tabs/category'
+    redirect: '/manage'
   },
   {
     path: '/tabs/',
@@ -43,6 +43,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/manage/',
+    redirect: '/manage/list',
     component: ManagePage,
     children: [
       {

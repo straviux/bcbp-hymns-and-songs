@@ -34,6 +34,7 @@
 </template>
 <script setup lang="ts">
 import { ref } from 'vue';
+import { Storage } from '@ionic/storage';
 import {
 	IonContent,
 	IonList,
@@ -91,65 +92,58 @@ const openModal = async (modalName: any) => {
 					false
 				);
 			}
+
 			loadData();
 		});
 
 		const loadData = async () => {
 			// console.log(db.value);
-			await db.value?.open();
-			const respSelect = await db.value?.query('SELECT * FROM songs');
-			// // console.log(`res: ${JSON.stringify(respSelect.length)}`);
-			// console.log(respSelect.values);
-			await db.value?.close();
-			await sqlite.value?.closeConnection('db_songlist', false);
-
-			// respSelect.values.forEach(async (song: any) => {
-			// 	// console.log(song)
-			// 	const response = await axios.post('/api/songs', {
-			// 		// content: songData,
-			// 		title: song.title,
-			// 		lyrics: song.lyrics,
-			// 		chords: song.chords,
-			// 		artist: song.artist,
-			// 		category: song.category,
-			// 	});
-			// });
-			const response = await axios.get('/api/songs');
-			const cloudDataLength = response.data.data.length;
+			const store = new Storage();
+			await store.create();
+			const lastLibraryUpdate = await store.get('last-library-update');
 			let toastMsg = 'Library is already up to date';
-			if (cloudDataLength !== respSelect.values.length) {
-				// console.log('do update script here');
+			await db.value?.open();
+
+			await axios.get('/api/songs').then((res: any) => {
+				const apiSongs = res.data.data;
+				const apiLastUpdate = res.data.last_update;
 				// db.value?.open();
+				if (lastLibraryUpdate != apiLastUpdate) {
+					let setLastUpdate = null;
+					db.value?.query('DELETE FROM songs');
+					// db.value?.close();
+					apiSongs.forEach((song: any) => {
+						try {
+							setLastUpdate = apiLastUpdate;
+							db.value?.query(
+								`INSERT INTO songs (id,title,lyrics,chords,artist,category) values (?,?,?,?,?,?)`,
+								[song.id, song.title, song.lyrics, song.chords, song.artist, song.category]
+							);
+							db.value?.close();
+							toastMsg = 'Library has been updated';
+						} catch (error) {
+							setLastUpdate = null;
+							alert(error);
+						}
+					});
+					store.set('last-library-update', setLastUpdate);
+				}
+			});
 
-				response.data.data.forEach(async (song: any) => {
-					// console.log(song);
-					try {
-						await db.value?.open();
-						await db.value?.query(
-							'INSERT INTO songs (id,title,lyrics,chords,artist,category) values (?,?,?,?,?,?)',
-							[song.id, song.title, song.lyrics, song.chords, song.artist, song.category]
-						);
-						toastMsg = 'Library has been updated';
-					} catch (e) {
-						// console.log((e as any).message);
-						toastMsg = 'Somethin went wrong, please try again';
-					}
-				});
-				// db.value?.close();
-				// console.log('library successfully updated');
-
-				updateLibraryModal.dismiss();
-			} else {
-				// console.log('there is no new update');
-				updateLibraryModal.dismiss();
-			}
+			updateLibraryModal.dismiss();
 			const toast = await toastController.create({
 				message: toastMsg,
-				duration: 1600,
+				duration: 3000,
 				cssClass: 'custom-toast',
 				position: 'bottom',
 			});
-			await toast.present();
+			toast.present();
+			toast.onDidDismiss().then((res) => {
+				// console.log(res);
+				if (res.role) {
+					window.location.reload();
+				}
+			});
 		};
 	}
 

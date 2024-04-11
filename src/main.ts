@@ -70,9 +70,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         id INTEGER PRIMARY KEY NOT NULL,
         title TEXT NOT NULL,
         lyrics TEXT NOT NULL,
-        chords TEXT NOT NULL,
-        artist TEXT NOT NULL,
-        category INTEGER NOT NULL
+        chords TEXT,
+        artist TEXT,
+        category TEXT
         );
         `
 
@@ -117,9 +117,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             },);
           });
           
-          // __songs.forEach((score: any) => {
-          //     console.log(score);
-          // });
+
           console.log('get values')
         } else {
           console.log(`res: ${JSON.stringify(respSelect.values.length)}`);
