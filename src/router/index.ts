@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
 import TabsPage from '../views/TabsPage.vue'
-import ManagePage from '../views/ManagePage.vue'
+// import ManagePage from '../views/ManagePage.vue'
 import SongViewPage from '../views/SongViewPage.vue'
 import { Storage } from '@ionic/storage';
 
@@ -12,7 +12,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/',
-    redirect: '/manage'
+    redirect: '/'
   },
   {
     path: '/tabs/',
@@ -41,37 +41,37 @@ const routes: Array<RouteRecordRaw> = [
     path: '/song/:songid/:type?',
     component: SongViewPage
   },
-  {
-    path: '/manage/',
-    redirect: '/manage/list',
-    component: ManagePage,
-    children: [
-      {
-        path: '',
-        redirect: '/manage/list'
-      },
-      {
-        path: 'list',
-        component: () => import('@/views/ManagePage/SongList.vue')
-      },
-      {
-        path: 'new-song',
-        component: () => import('@/views/ManagePage/AddSong.vue')
-      },
-      {
-        path: 'update-song/:songid',
-        component: () => import('@/views/ManagePage/UpdateSong.vue')
-      },
-      {   
-        path: 'update-song-chord/:songid',
-        component: () => import('@/views/ManagePage/UpdateSongChords.vue')
-      },
-      {
-        path: 'category',
-        component: () => import('@/views/ManagePage/AddCategory.vue')
-      }
-    ],
-  }
+  // {
+  //   path: '/manage/',
+  //   redirect: '/manage/list',
+  //   component: ManagePage,
+  //   children: [
+  //     {
+  //       path: '',
+  //       redirect: '/manage/list'
+  //     },
+  //     {
+  //       path: 'list',
+  //       component: () => import('@/views/ManagePage/SongList.vue')
+  //     },
+  //     {
+  //       path: 'new-song',
+  //       component: () => import('@/views/ManagePage/AddSong.vue')
+  //     },
+  //     {
+  //       path: 'update-song/:songid',
+  //       component: () => import('@/views/ManagePage/UpdateSong.vue')
+  //     },
+  //     {   
+  //       path: 'update-song-chord/:songid',
+  //       component: () => import('@/views/ManagePage/UpdateSongChords.vue')
+  //     },
+  //     {
+  //       path: 'category',
+  //       component: () => import('@/views/ManagePage/AddCategory.vue')
+  //     }
+  //   ],
+  // }
 ]
 
 const router = createRouter({
