@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
-import TabsPage from '../views/TabsPage.vue'
-// import ManagePage from '../views/ManagePage.vue'
-import SongViewPage from '../views/SongViewPage.vue'
+// import TabsPage from '../views/TabsPage.vue'
+import ManagePage from '../views/ManagePage.vue'
+// import SongViewPage from '../views/SongViewPage.vue'
 import { Storage } from '@ionic/storage';
 
 const routes: Array<RouteRecordRaw> = [
@@ -12,66 +12,65 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/',
-    redirect: '/'
-  },
-  {
-    path: '/tabs/',
-    component: TabsPage,
-    children: [
-      {
-        path: '',
-        redirect: '/tabs/songs'
-      },
-      {
-        path: 'songs',
-        component: () => import('@/views/SongListPage.vue')
-      },
-      
-      {
-        path: 'category',
-        component: () => import('@/views/CategoryListPage.vue')
-      },
-      {
-        path: 'chords',
-        component: () => import('@/views/ChordListPage.vue')
-      }
-    ],
-  },
-  {
-    path: '/song/:songid/:type?',
-    component: SongViewPage
+    redirect: '/manage/list'
   },
   // {
-  //   path: '/manage/',
-  //   redirect: '/manage/list',
-  //   component: ManagePage,
+  //   path: '/tabs/',
+  //   component: TabsPage,
   //   children: [
   //     {
   //       path: '',
-  //       redirect: '/manage/list'
+  //       redirect: '/tabs/songs'
   //     },
   //     {
-  //       path: 'list',
-  //       component: () => import('@/views/ManagePage/SongList.vue')
+  //       path: 'songs',
+  //       component: () => import('@/views/SongListPage.vue')
   //     },
-  //     {
-  //       path: 'new-song',
-  //       component: () => import('@/views/ManagePage/AddSong.vue')
-  //     },
-  //     {
-  //       path: 'update-song/:songid',
-  //       component: () => import('@/views/ManagePage/UpdateSong.vue')
-  //     },
-  //     {   
-  //       path: 'update-song-chord/:songid',
-  //       component: () => import('@/views/ManagePage/UpdateSongChords.vue')
-  //     },
+      
   //     {
   //       path: 'category',
-  //       component: () => import('@/views/ManagePage/AddCategory.vue')
+  //       component: () => import('@/views/CategoryListPage.vue')
+  //     },
+  //     {
+  //       path: 'chords',
+  //       component: () => import('@/views/ChordListPage.vue')
   //     }
   //   ],
-  // }
+  // },
+  // {
+  //   path: '/song/:songid/:type?',
+  //   component: SongViewPage
+  // },
+  {
+    path: '/manage/',
+    component: ManagePage,
+    children: [
+      {
+        path: '',
+        redirect: '/manage/list'
+      },
+      {
+        path: 'list',
+        component: () => import('@/views/ManagePage/SongList.vue')
+      },
+      {
+        path: 'new-song',
+        component: () => import('@/views/ManagePage/AddSong.vue')
+      },
+      {
+        path: 'update-song/:songid',
+        component: () => import('@/views/ManagePage/UpdateSong.vue')
+      },
+      {   
+        path: 'update-song-chord/:songid',
+        component: () => import('@/views/ManagePage/UpdateSongChords.vue')
+      },
+      {
+        path: 'category',
+        component: () => import('@/views/ManagePage/AddCategory.vue')
+      }
+    ],
+  }
 ]
 
 const router = createRouter({
