@@ -31,7 +31,7 @@ import { JeepSqlite } from 'jeep-sqlite/dist/components/jeep-sqlite';
 // import axios from 'axios';
 
 customElements.define('jeep-sqlite', JeepSqlite);
-// console.log(`after customElements.define`);
+console.log(`after customElements.define`);
 
 
 window.addEventListener('DOMContentLoaded', async () => {
@@ -120,9 +120,9 @@ window.addEventListener('DOMContentLoaded', async () => {
           // __songs.forEach((score: any) => {
           //     console.log(score);
           // });
-          // console.log('get values')
+          console.log('get values')
         } else {
-          // console.log(`res: ${JSON.stringify(respSelect.values.length)}`);
+          console.log(`res: ${JSON.stringify(respSelect.values.length)}`);
         }
         
 
