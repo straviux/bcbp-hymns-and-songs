@@ -2,9 +2,17 @@
 	<ion-page>
 		<HeaderToolBar @emitSearch="handleSearchQuery" :isHeaderHidden="isHeaderHidden" />
 		<ion-content :fullscreen="true" @ionScroll="onContentScroll($event)" :scroll-events="true">
-			<ion-list v-if="filterSongs?.length > 0">
+			<ion-list v-if="filteredSongs?.length > 0">
+				<ion-list-header>
+					<ion-label class="list-header"
+						>Songs
+						<span style="font-size: 12px; color: #a8a8a8"
+							>[{{ filteredSongs.length }}]</span
+						></ion-label
+					>
+				</ion-list-header>
 				<ion-item
-					v-for="(song, i) in filterSongs"
+					v-for="(song, i) in filteredSongs"
 					:key="'song_' + i"
 					:href="'/song/' + song.id + '/lyrics'"
 				>
@@ -46,6 +54,7 @@ import {
 	IonContent,
 	IonItem,
 	IonLabel,
+	IonListHeader,
 	IonList,
 	IonIcon,
 } from '@ionic/vue';
@@ -102,24 +111,42 @@ const loadData = async () => {
 	await db.value?.close();
 
 	songs.value = respSelect?.values;
+	// console.log(songs.value);
 };
 
 const songs = ref<any>();
 const searchQuery = ref('');
 const handleSearchQuery = (data: any) => {
 	searchQuery.value = data.searchQuery;
+	// console.log(filteredSongs.value);
 };
-const filterSongs = computed(() => {
+
+const filterArray = (term: string) => {
 	return songs.value
-		?.filter(
-			(song: any) =>
-				song.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-				song.lyrics.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-				song.category.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-				song.artist?.toLowerCase().includes(searchQuery.value.toLowerCase())
-		)
+		?.filter((song: any) => {
+			return (
+				song.title.toLowerCase().includes(term) ||
+				song.lyrics.toLowerCase().includes(term) ||
+				song.artist?.toLowerCase().includes(term)
+			);
+		})
 		.sort((a: any, b: any) => a.title.localeCompare(b.title));
+};
+const filteredSongs = computed(() => {
+	return filterArray(searchQuery.value.toLocaleLowerCase());
 });
+// const filterSongs = computed(() => {
+// 	return songs.value
+// 		?.filter(
+// 			(song: any) =>
+// 				song.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+// 				song.lyrics.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+// 				song.category.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+// 				song.artist?.toLowerCase().includes(searchQuery.value.toLowerCase())
+// 		)
+// 		.sort((a: any, b: any) => a.title.localeCompare(b.title));
+// });
+
 // onIonViewDidEnter(async () => {
 // 	const data = await fetch('/songs.json');
 // 	const __songs = await data.json();

@@ -10,16 +10,33 @@
 					<ion-icon slot="start" :icon="settingsOutline"></ion-icon>
 					Settings
 				</ion-button></ion-item
-			><ion-item button @click="openModal('update')"
+			><ion-item button @click="openModal('update')" v-if="checkUpdate"
 				><ion-button
 					fill="clear"
 					expand="block"
 					style="color: #777; text-transform: capitalize; font-size: 14px; padding: 10px 0"
 				>
 					<ion-icon slot="start" :icon="cloudDownloadOutline"></ion-icon>
-					Update Library
-				</ion-button></ion-item
-			><ion-item lines="none" button @click="openModal('about')"
+					Download Update </ion-button
+				><ion-badge color="success" v-if="checkUpdate">new</ion-badge></ion-item
+			>
+			<ion-item v-else-if="!isUpdated">
+				<ion-spinner name="lines-sharp-small"></ion-spinner
+				><ion-label style="color: #777; font-size: 14px; padding: 10px 0"
+					>Checking for updates</ion-label
+				></ion-item
+			>
+			<ion-item v-else>
+				<ion-button
+					fill="clear"
+					expand="block"
+					style="color: #777; text-transform: capitalize; font-size: 14px; padding: 10px 0"
+					><ion-icon slot="start" :icon="checkmarkCircleOutline"></ion-icon>Library is up to
+					date</ion-button
+				></ion-item
+			>
+
+			<ion-item lines="none" button @click="openModal('about')"
 				><ion-button
 					fill="clear"
 					expand="block"
@@ -40,11 +57,19 @@ import {
 	IonList,
 	IonItem,
 	IonButton,
+	IonBadge,
 	IonIcon,
+	IonSpinner,
+	IonLabel,
 	modalController,
 	toastController,
 } from '@ionic/vue';
-import { cloudDownloadOutline, informationCircleOutline, settingsOutline } from 'ionicons/icons';
+import {
+	cloudDownloadOutline,
+	informationCircleOutline,
+	settingsOutline,
+	checkmarkCircleOutline,
+} from 'ionicons/icons';
 import SettingsModal from '@/components/Modals/SettingsModal.vue';
 import UpdateLibraryModal from '@/components/Modals/UpdateLibraryModal.vue';
 import AboutModal from '@/components/Modals/AboutModal.vue';
@@ -54,7 +79,23 @@ import { CapacitorSQLite, SQLiteConnection, SQLiteDBConnection } from '@capacito
 
 const db = ref<any>(SQLiteDBConnection);
 const sqlite = ref<any>(SQLiteConnection);
+const checkUpdate = ref(false);
+const isUpdated = ref(false);
+const hasUpdate = async () => {
+	const store = new Storage();
+	await store.create();
+	const lastLibraryUpdate = await store.get('last-library-update');
 
+	await axios.get('api/last-update').then((res) => {
+		if (lastLibraryUpdate != res.data.last_update) {
+			checkUpdate.value = true;
+		} else {
+			isUpdated.value = true;
+		}
+		return;
+	});
+};
+hasUpdate();
 // const message = ref('This modal example uses the modalController to present and dismiss modals.');
 const openModal = async (modalName: any) => {
 	const aboutModalComponent = {
@@ -135,6 +176,7 @@ const openModal = async (modalName: any) => {
 						}
 					});
 					store.set('last-library-update', setLastUpdate);
+					isUpdated.value = true;
 					db.value?.close();
 				}
 				// console.log(...apiSongs);

@@ -16,7 +16,7 @@
 			/>
 			<div style="margin: auto">
 				<h4>BCBP Hyms & Songs</h4>
-				<div style="font-size: 12px; color: #777; margin-top: 10px"><span>Version 1.1</span></div>
+				<div style="font-size: 12px; color: #777; margin-top: 10px"><span>Version 1.2</span></div>
 				<div style="font-size: 12px; color: #777; margin-top: 10px">
 					Last library update: <span>04/08/2024</span>
 				</div>

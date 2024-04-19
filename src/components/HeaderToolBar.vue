@@ -2,7 +2,7 @@
 	<ion-header class="ion-no-border">
 		<ion-toolbar class="header-transition" :class="{ 'ion-header-hidden': isHeaderHidden }">
 			<img
-				src="/public/bcbp-seeklogo.svg"
+				src="/bcbp-seeklogo.svg"
 				height="40"
 				slot="start"
 				style="margin-left: 14px; margin-right: -10px"
@@ -22,6 +22,7 @@
 				show-clear-button="focus"
 				class="searchbar"
 				id="searchbar"
+				v-model="searchQuery"
 				@keyup="sendDataToParent"
 			></ion-searchbar>
 		</ion-toolbar>
@@ -32,7 +33,6 @@
 import MenuList from '@/components/MenuList.vue';
 import { defineEmits, defineProps, ref } from 'vue';
 import {
-	// onIonViewWillLeave,
 	IonPopover,
 	IonButton,
 	IonButtons,
@@ -47,13 +47,13 @@ defineProps({
 	isHeaderHidden: { type: Boolean, default: false },
 });
 const emits = defineEmits(['emitSearch']);
-
+const searchQuery = ref('');
 // Define the method to emit the custom event
 const sendDataToParent = () => {
 	// Emit the custom event with the data you want to send
-	const searchValue = (document.querySelector('#searchbar') as HTMLInputElement | null)?.value;
+	// const searchValue = searchQuery.value;
 	// if (event) {
-	emits('emitSearch', { searchQuery: searchValue });
+	emits('emitSearch', { searchQuery: searchQuery.value });
 	// }
 };
 const popoverOpen = ref(false);

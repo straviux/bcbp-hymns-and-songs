@@ -6,7 +6,12 @@
 				<div v-for="(category, i) in filteredCategory" :key="'category_' + i">
 					<ion-list v-if="category.songs.length > 0" lines="inset">
 						<ion-list-header>
-							<ion-label class="list-header">{{ category.name }}</ion-label>
+							<ion-label class="list-header"
+								>{{ category.name }}
+								<span style="font-size: 12px; color: #a8a8a8"
+									>[{{ category.songs.length }}]</span
+								></ion-label
+							>
 						</ion-list-header>
 						<ion-item
 							v-for="(song, i) in category.songs"
@@ -88,6 +93,7 @@ const filterArray = (array: any, term: string) => {
 		songs: item.songs
 			.filter((song: any) => {
 				return (
+					song.category.toLowerCase().includes(term) ||
 					song.title.toLowerCase().includes(term) ||
 					song.lyrics.toLowerCase().includes(term) ||
 					song.artist?.toLowerCase().includes(term)
@@ -130,6 +136,7 @@ onIonViewDidEnter(async () => {
 });
 
 onIonViewWillLeave(async () => {
+	searchQuery.value = '';
 	await sqlite.value?.closeConnection('db_songlist', false);
 });
 
@@ -156,6 +163,7 @@ const loadData = async () => {
 			}
 		}
 	});
+	console.log(filteredCategory.value);
 };
 
 // const { data } = await axios.get('../../database/songs.json');
