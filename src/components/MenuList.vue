@@ -87,6 +87,7 @@ const hasUpdate = async () => {
 	const lastLibraryUpdate = await store.get('last-library-update');
 
 	await axios.get('api/last-update').then((res) => {
+		console.log('test');
 		if (lastLibraryUpdate != res.data.last_update) {
 			checkUpdate.value = true;
 		} else {

@@ -24,17 +24,25 @@
 						slot="end"
 						size="small"
 						color="dark"
-						fill="outline"
+						fill="clear"
 						:href="'manage/update-song/' + song.id"
 						><ion-icon :icon="createOutline" size="small"></ion-icon> edit
 					</ion-button>
 					<ion-button
 						slot="end"
 						size="small"
-						fill="outline"
+						fill="clear"
 						color="warning"
 						:href="'manage/update-song-chord/' + song.id"
 						><ion-icon :icon="add" size="small"></ion-icon> chords
+					</ion-button>
+					<ion-button
+						slot="end"
+						size="small"
+						fill="clear"
+						color="danger"
+						@click="deleteSong(song.id, song.title)"
+						><ion-icon :icon="trashBinOutline" size="small"></ion-icon>
 					</ion-button>
 				</ion-item>
 			</ion-list>
@@ -74,7 +82,7 @@ import {
 	IonFabButton,
 	IonFab,
 } from '@ionic/vue';
-import { cloudOfflineOutline, add, createOutline } from 'ionicons/icons';
+import { cloudOfflineOutline, add, createOutline, trashBinOutline } from 'ionicons/icons';
 // import { CapacitorSQLite, SQLiteConnection, SQLiteDBConnection } from '@capacitor-community/sqlite';
 
 const isHeaderHidden = ref(false);
@@ -103,10 +111,30 @@ const filterSongs = computed(() => {
 		)
 		.sort((a: any, b: any) => a.title.localeCompare(b.title));
 });
-onIonViewDidEnter(async () => {
+
+const deleteSong = async (songId: number, title: string) => {
+	// console.log(songId);
+	if (confirm('Are you sure you want to delete this song?\n' + title)) {
+		console.log('Song deleted');
+		try {
+			await axios.delete('/api/songs/' + songId).then(() => {
+				getSongList();
+			});
+		} catch (error) {
+			return error;
+		}
+	} else {
+		return;
+	}
+};
+
+const getSongList = async () => {
 	const response = await axios.get('/api/songs');
-	console.log(response.data);
+	// console.log(response.data);
 	songs.value = response.data.data;
+};
+onIonViewDidEnter(async () => {
+	getSongList();
 	// console.log(songs.value);
 });
 // const { data } = await axios.get('../../database/songs.json');

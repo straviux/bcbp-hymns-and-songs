@@ -12,7 +12,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/',
-    redirect: '/tabs/category'
+    redirect: '/manage/list'
   },
   {
     path: '/tabs/',

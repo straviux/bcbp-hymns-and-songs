@@ -3,7 +3,46 @@
 		<HeaderToolBar @emitSearch="handleSearchQuery" :isHeaderHidden="isHeaderHidden" />
 		<ion-content :fullscreen="true" @ionScroll="onContentScroll($event)" :scroll-events="true">
 			<div v-if="filteredCategory?.length > 0">
-				<div v-for="(category, i) in filteredCategory" :key="'category_' + i">
+				<ion-accordion-group>
+					<ion-accordion
+						:value="'category_' + i"
+						v-for="(category, i) in filteredCategory"
+						:key="'category_' + i"
+					>
+						<ion-item slot="header" color="light">
+							<ion-label class="list-header" style="color: #888"
+								>{{ category.name
+								}}<span style="font-size: 12px; color: #a8a8a8">
+									[{{ category.songs.length }}]</span
+								></ion-label
+							>
+						</ion-item>
+						<div slot="content">
+							<ion-item
+								v-for="(song, i) in category.songs"
+								:key="'song_' + i"
+								:href="'/song/' + song.id + '/lyrics'"
+							>
+								<ion-label class="fade-in-left-animation song-label"
+									><p>{{ song.title }}</p>
+									<span v-if="song.artist" class="song-artist">{{ song.artist }}</span>
+								</ion-label>
+
+								<ion-button
+									v-if="song.chords"
+									slot="end"
+									size="small"
+									fill="outline"
+									color="warning"
+									:href="'/song/' + song.id + '/chords'"
+									>chords
+								</ion-button>
+							</ion-item>
+						</div>
+					</ion-accordion>
+				</ion-accordion-group>
+
+				<!-- <div v-for="(category, i) in filteredCategory" :key="'category_' + i">
 					<ion-list v-if="category.songs.length > 0" lines="inset">
 						<ion-list-header>
 							<ion-label class="list-header"
@@ -34,7 +73,7 @@
 							</ion-button>
 						</ion-item>
 					</ion-list>
-				</div>
+				</div> -->
 			</div>
 			<div v-else class="no-result">
 				<div class="no-result-content" v-if="searchQuery">
@@ -55,12 +94,12 @@ import {
 	onIonViewDidEnter,
 	onIonViewWillLeave,
 	IonButton,
-	IonListHeader,
+	IonAccordion,
 	IonPage,
 	IonContent,
 	IonItem,
 	IonLabel,
-	IonList,
+	IonAccordionGroup,
 	IonIcon,
 } from '@ionic/vue';
 import { cloudOfflineOutline } from 'ionicons/icons';
@@ -163,7 +202,7 @@ const loadData = async () => {
 			}
 		}
 	});
-	console.log(filteredCategory.value);
+	// console.log(filteredCategory.value);
 };
 
 // const { data } = await axios.get('../../database/songs.json');

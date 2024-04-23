@@ -109,6 +109,7 @@ const saveToFile = async () => {
 
 		loading.present();
 		const response = await axios.patch('/api/songs/' + songId, {
+			title: title.value,
 			chords: chords.value,
 		});
 		const toast = await toastController.create({

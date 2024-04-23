@@ -7,7 +7,7 @@
 					<ion-icon aria-hidden="true" :icon="musicalNote" />
 					<ion-label>Songs</ion-label>
 				</ion-tab-button> -->
-				<ion-tab-button tab="tab3" href="/manage/">
+				<ion-tab-button tab="tab3" href="/manage/list">
 					<ion-icon aria-hidden="true" :icon="settingsOutline" />
 					<ion-label>Manage</ion-label>
 				</ion-tab-button>
